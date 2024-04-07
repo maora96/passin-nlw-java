@@ -1,5 +1,7 @@
 package com.maora.passin.controllers;
 
+import com.maora.passin.dto.attendee.AttendeeIdDTO;
+import com.maora.passin.dto.attendee.AttendeeRequestDTO;
 import com.maora.passin.dto.attendee.AttendeesListResponseDTO;
 import com.maora.passin.dto.event.EventIdDTO;
 import com.maora.passin.dto.event.EventRequestDTO;
@@ -36,4 +38,12 @@ public class EventController {
         AttendeesListResponseDTO attendeesListResponse = this.attendeeService.getEventsAttendee(id);
         return ResponseEntity.ok(attendeesListResponse);
     }
+
+    @PostMapping("/{eventId}/attendees")
+    public ResponseEntity<AttendeeIdDTO> registerParticipant(@PathVariable String eventId, @RequestBody AttendeeRequestDTO body, UriComponentsBuilder uriComponentsBuilder){
+        AttendeeIdDTO attendeeIdDTO = this.eventService.registerAttendeeOnEvent(eventId, body);
+        var uri = uriComponentsBuilder.path("/attendees/{attendId}/badge").buildAndExpand(attendeeIdDTO.attendeeId()).toUri();
+        return ResponseEntity.created(uri).body(attendeeIdDTO);
+    }
+
 }
